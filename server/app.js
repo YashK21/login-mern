@@ -1,4 +1,5 @@
 const express = require("express");
+const app = express();
 // const mongoose = require("mongoose");
 const config = require("../server/config.json");
 const connection = require("./db/conn");
@@ -6,9 +7,10 @@ const middleware = (req, res, next) => {
   console.log("at middleware");
   next();
 };
-const app = express();
+app.use(express.json());
 // connection();
-
+app.use(require("./router/auth"));
+//link to route files
 app.get("/", (req, res) => {
   console.log("object");
   res.send(`Hello`);
@@ -23,7 +25,7 @@ app.get("/contact", (req, res) => {
 app.get("/login", (req, res) => {
   res.send(`login`);
 });
-app.get("/signin", (req, res) => {
+app.post("/signin", (req, res) => {
   res.send(`signin`);
 });
 app.listen(config.port, () => {
