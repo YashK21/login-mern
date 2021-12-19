@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const bcrpyt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const authenticate = require("../authentication/authentication");
 require("../db/conn");
 const User = require("../model/schema");
 router.get("/", (req, res) => {
@@ -53,7 +54,7 @@ router.post("/signin", async (req, res) => {
     if (userlogin) {
       const match = await bcrpyt.compare(password, userlogin.password);
       const token = await userlogin.generateAuthToken();
-      console.log(token);
+      // console.log(token);
       res.cookie("jwtoken", token, {
         expires: new Date(Date.now() + 25892000000),
         httpOnly: true,
@@ -71,5 +72,9 @@ router.post("/signin", async (req, res) => {
   } catch (err) {
     console.log(err);
   }
+});
+router.get("/about", authenticate, (req, res) => {
+  console.log("after middleware");
+  res.send(`about`);
 });
 module.exports = router;

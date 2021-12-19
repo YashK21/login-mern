@@ -1,6 +1,7 @@
 import React, { useState } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useHistory } from "react-router-dom";
 const Register = () => {
+  const history = useHistory();
   const [user, setUser] = useState({
     name: "",
     email: "",
@@ -11,21 +12,51 @@ const Register = () => {
   });
   let name, value;
   const reg = (e) => {
-    console.log(e);
+    console.log();
     name = e.target.name;
     value = e.target.value;
     setUser({ ...user, [name]: value });
   };
+  const submit = async (e) => {
+    e.preventDefault();
+    const { name, email, phone, work, password, cpassword } = user;
+    const res = await fetch("/register", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        name,
+        email,
+        phone,
+        work,
+        password,
+        cpassword,
+      }),
+    });
+    const data = await res.json();
+    if (data.status === 422 || !data) {
+      alert("Invalid Registration");
+      console.log("Invalid Registration");
+    } else {
+      alert("Successfull Registration");
+      console.log("Successfull Registration");
+      history.push("/login");
+    }
+  };
+
   return (
     <div>
-      <form>
+      <form method="POST">
         <label>Name</label>
         <input
           type="text"
           name="name"
           autoComplete="off"
           value={user.name}
-          onChange={reg}
+          onChange={(e) => {
+            reg(e);
+          }}
           placeholder="name"
         ></input>
         <br />
@@ -35,7 +66,9 @@ const Register = () => {
           name="email"
           autoComplete="off"
           value={user.email}
-          onChange={reg}
+          onChange={(e) => {
+            reg(e);
+          }}
           placeholder="email"
         ></input>
         <br />
@@ -45,7 +78,9 @@ const Register = () => {
           name="phone"
           autoComplete="off"
           value={user.phone}
-          onChange={reg}
+          onChange={(e) => {
+            reg(e);
+          }}
           placeholder="phone"
         ></input>
         <br />
@@ -55,7 +90,9 @@ const Register = () => {
           name="work"
           autoComplete="off"
           value={user.work}
-          onChange={reg}
+          onChange={(e) => {
+            reg(e);
+          }}
           placeholder="work"
         ></input>
         <br />
@@ -65,7 +102,9 @@ const Register = () => {
           name="password"
           autoComplete="off"
           value={user.password}
-          onChange={reg}
+          onChange={(e) => {
+            reg(e);
+          }}
           placeholder="password"
         ></input>
         <br />
@@ -75,12 +114,16 @@ const Register = () => {
           name="cpassword"
           autoComplete="off"
           value={user.cpassword}
-          onChange={reg}
+          onChange={(e) => {
+            reg(e);
+          }}
           placeholder="confirm password"
         ></input>
         <br />
       </form>
-      <button type="submit">Register</button>
+      <button type="submit" onClick={submit}>
+        Register
+      </button>
       <NavLink to="/login">
         <button>Already have an Account!</button>
       </NavLink>
